@@ -1,0 +1,64 @@
+const { Builder, By, Key } = require('selenium-webdriver');
+const firefox = require('selenium-webdriver/firefox');
+
+const options = new firefox.Options();
+options.setPreference('browser.download.folderList', "");
+const driver = new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
+
+async function registerAndLogin() {
+  try {
+    await driver.get('https://gorgeous-lion-pleat.cyclic.app/login');
+
+    await driver.findElement(By.id('email')).sendKeys('arnavkatiyarr@gmail.com');
+    await driver.findElement(By.id('password')).sendKeys('arnav1234', Key.RETURN);
+
+    await driver.sleep(2000); // You can use driver.sleep to wait for a specific duration
+
+    console.log('Login successful!');
+
+    await driver.get('https://gorgeous-lion-pleat.cyclic.app');
+
+    const addButton = await driver.findElement(By.className('btn btn-primary'));
+    await addButton.click();
+
+    console.log('Clicked the "Add New" button!');
+    await driver.sleep(2000); 
+
+    await driver.findElement(By.id('amount')).sendKeys('100');
+
+
+
+    const categoryDropdown = await driver.findElement(By.id('category'));
+    await categoryDropdown.click();
+
+    // Wait for the dropdown options to load
+
+    const options = await categoryDropdown.findElements(By.id("category"));
+    for (const option of options) {
+      if (await option.getText() === "Food") {
+        await option.click();
+        break;
+      }
+    }
+
+    // await driver.findElement(By.css('#category option[value="food"]')).click();
+    await driver.sleep(2000); 
+
+
+    await driver.findElement(By.id('reference')).sendKeys('ABC123');
+
+    await driver.findElement(By.id('description')).sendKeys('This is a test description');
+    await driver.sleep(5000); 
+    const saveButtonInModal = await driver.findElement(By.css('.ant-modal-wrap .btn-primary'));
+    await saveButtonInModal.click();
+    await driver.sleep(10000); 
+
+
+    
+
+  } catch (error) {
+    console.error('Error occurred during registration or login:', error);
+  } 
+}
+
+registerAndLogin();
